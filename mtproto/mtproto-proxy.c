@@ -68,7 +68,7 @@
 #define COMMIT "unknown"
 #endif
 
-#define VERSION_STR	"mtproxy-0.01"
+#define VERSION_STR	"mtproxy-3.0.5"
 const char FullVersionStr[] = VERSION_STR " compiled at " __DATE__ " " __TIME__ " by gcc " __VERSION__ " "
 #ifdef __LP64__
   "64-bit"
@@ -409,7 +409,7 @@ int worker_id, workers, slave_mode, parent_pid;
 int pids[MAX_WORKERS];
 
 long long get_queries;
-long long http_queries;
+extern long long http_queries;
 int pending_http_queries;
 
 long long active_rpcs, active_rpcs_created;
@@ -2229,6 +2229,9 @@ int f_parse_option (int val) {
       }
     }
     break;
+  case 'R':
+    tcp_rpcs_set_ext_rand_pad_only(1);
+    break;
   default:
     return -1;
   }
@@ -2246,6 +2249,7 @@ void mtfront_prepare_parse_options (void) {
   // parse_option ("outbound-connections-ps", required_argument, 0, 'o', "limits creation rate of outbound connections to mtproto-servers (default %d)", DEFAULT_OUTBOUND_CONNECTION_CREATION_RATE);
   parse_option ("slaves", required_argument, 0, 'M', "spawn several slave workers; not recommended for TLS-transport mode for better replay protection");
   parse_option ("ping-interval", required_argument, 0, 'T', "sets ping interval in second for local TCP connections (default %.3lf)", PING_INTERVAL);
+  parse_option ("random-padding-only", no_argument, 0, 'R', "allow only clients with random padding option enabled");
 }
 
 void mtfront_parse_extra_args (int argc, char *argv[]) /* {{{ */ {
